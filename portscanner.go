@@ -81,8 +81,7 @@ func CIDRtoIPRange(subnet string) []string {
 	lastIP := (firstIP & mask) | (mask ^ 0xffffffff)
 
 	// loop through addresses
-	//(subtracting 1 discards the network and broadcast addresses)
-	for i := firstIP + 1; i <= lastIP - 1; i++ {
+	for i := firstIP; i <= lastIP; i++ {
 		// convert back to IPv4 addresses
 		ip := make(net.IP, 4)
 		binary.BigEndian.PutUint32(ip, i)
@@ -104,7 +103,7 @@ func main() {
   validIp := false
 	validPorts := false
 
-
+  fmt.Println("Welcome to GoGoGoScan!")
 	for validOption != true {
 			fmt.Println("Would you like to scan a single target or a subnet? Please answer 1 or 2.")
 			fmt.Println("1- Single target scan")
@@ -161,7 +160,7 @@ func main() {
 				//if the user wants to scan using a CIDR
 				if choice == 2 {
 					//prompts user to enter the target in CIDR notation
-						fmt.Println("Enter the CIDR you would like to scan: ")
+						fmt.Println("Enter the range, in CIDR notation, that you would like to scan (ex: 10.0.0.0/28): ")
 						fmt.Scanln(&cidr)
 
 					//prompts the user for the port range
@@ -180,6 +179,7 @@ func main() {
 
 					//converts the CIDR to a range of IP addresses
 					jobHosts := CIDRtoIPRange(cidr)
+					fmt.Println("Launching " + strconv.Itoa(len(jobHosts)) + " jobs.")
 					//iterates through the hosts in the range
 					for _, host := range jobHosts {
 						fmt.Println("Now running scan on " + host + " for ports " + strconv.Itoa(initPort) + " to " + strconv.Itoa(finalPort))
@@ -193,9 +193,9 @@ func main() {
 					start := time.Now()
 					job.Start(initPort, finalPort, 500*time.Millisecond)
 					elapsed := time.Since(start)
-					fmt.Printf("Scan completed in %s", elapsed)
+					fmt.Printf("Scan completed in %s \n", elapsed)
 				}
-	  	    }
-	   }
-   }
+	  	}
+	  }
+  }
 }
